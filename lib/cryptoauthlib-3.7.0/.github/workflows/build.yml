@@ -1,0 +1,117 @@
+name: Build and deploy wheels to pypi
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 20*
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Describe Tag & Branch Name
+        if:  github.event_name == 'push' && startsWith(github.ref, 'refs/tags/20')
+        id: build_names
+        shell: bash
+        run: |
+          cd python
+          echo ${GITHUB_REF#refs/tags/} >VERSION
+
+      - name: Configure Environment
+        shell: bash
+        run: |
+          cd python
+          cp ../release_notes.md .
+          cp -r ../lib .
+          cp -r ../third_party .
+          mkdir app
+          cp -r ../app/tng app
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.11.1
+        with:
+          package-dir: python 
+        env:
+          CIBW_SKIP: "cp27-* cp36-* cp37-* pp37-* *-musllinux* pp*-macosx*"
+          CIBW_MANYLINUX_X86_64_IMAGE: "manylinux_2_28"
+          CIBW_BEFORE_BUILD_LINUX: "yum update -y && yum install -y libusb-devel"
+          CIBW_BUILD_VERBOSITY: 3
+          CIBW_ARCHS_LINUX: "x86_64"
+          CIBW_ARCHS_MACOS: "x86_64 arm64"
+          # Skip trying to test arm64 builds on Intel Macs
+          CIBW_TEST_SKIP: "*-macosx_arm64 *-macosx_universal2:arm64"
+          CMAKE_OSX_ARCHITECTURES: "arm64;x86_64"
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: wheelhouse/*.whl
+
+  build_sdist:
+    name: Build source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        name: Install Python
+        with:
+          python-version: '3.7'
+
+      - name: Describe Tag & Branch Name
+        id: build_names
+        run: |
+          echo ::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}
+
+      - name: Build sdist
+        run: |
+          echo $TAG_NAME
+          cd python
+          echo $TAG_NAME >VERSION
+          cp -r ../lib .
+          cp -r ../third_party .
+          mkdir app
+          cp -r ../app/tng app
+          python setup.py sdist
+        env:
+          TAG_NAME: ${{ steps.build_names.outputs.TAG_NAME }}
+
+      - uses: actions/upload-artifact@v2
+        with:
+          path: python/dist/*.tar.gz
+
+  upload_pypi:
+    if:  github.event_name == 'push' && startsWith(github.ref, 'refs/tags/20')
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: artifact
+          path: dist
+
+      - name: Production Release
+        if: startsWith(github.repository, 'MicrochipTech')
+        uses: pypa/gh-action-pypi-publish@release/v1.5
+        with:
+          user: ${{ secrets.pypi_username }}
+          password: ${{ secrets.pypi_password }}
+          skip_existing: true
+
+      - name: Test Release
+        if: ${{ !startsWith(github.repository, 'MicrochipTech') }}
+        uses: pypa/gh-action-pypi-publish@release/v1.5
+        with:
+          user: ${{ secrets.pypi_username }}
+          password: ${{ secrets.pypi_password }}
+          repository_url: https://test.pypi.org/legacy/
+          skip_existing: true

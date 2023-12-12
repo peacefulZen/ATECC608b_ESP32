@@ -1,0 +1,31 @@
+{
+    "name": "CryptoAuthLib",
+    "version": "3.7.0",
+    "author": "Microchip Technology Inc",
+    "description": "Library for interacting with the Crypto Authentication secure elements",
+    "repository":
+    {
+        "type": "git",
+        "url": "https://github.com/MicrochipTech/cryptoauthlib"
+    },
+    "build": {
+        "srcDir": "lib",
+        "includeDir": "lib",
+        "flags": [
+            "-Ilib/atcacert",
+            "-Ilib/hal",
+            "-Ilib/crypto",
+            "-Ilib/host",
+            "-Ilib/jwt"
+        ],
+        "srcFilter": [
+            "+<atca*.c>",
+            "+<cal*.c>",
+            "+<atcacert>",
+            "+<calib/>",
+            "+<hal/atca_hal.c>",
+            "+<jwt/>",
+            "+<host/>"
+        ]
+    }
+}

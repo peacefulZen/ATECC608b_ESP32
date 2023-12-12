@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.c": "c",
+        "cal_buffer.h": "c",
+        "string.h": "c",
+        "atca_host_config_check.h": "c"
+    }
+}
