@@ -1,5 +1,7 @@
 #include <Arduino.h>
+extern "C" {
 #include "cryptoauthlib.h"
+}
 #include "Configuration.h"
 
 uint8_t KEY_SLOT = (uint8_t)9;
@@ -77,7 +79,7 @@ bool menu(String message)
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(74880);
 
   // Init the constuctor for the library
   cfg.iface_type = ATCA_I2C_IFACE;  // Type of communication -> I2C mode
@@ -87,6 +89,10 @@ void setup()
   cfg.atcai2c.baud = 100000;
   cfg.wake_delay = 1500; // Delay of wake up (1500 ms)
   cfg.rx_retries = 20;
+  Serial.println("\nFirmware start!");
+  // by default logs to stderr, which is not visible printed by printf() in Arduino.
+  // redirect to stdout instead to makeit  visible.
+  atca_trace_config(stdout);
 }
 
 void loop()

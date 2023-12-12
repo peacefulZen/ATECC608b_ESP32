@@ -31,7 +31,7 @@
 
 /** Define to enable compatibility with legacy HALs
    (HALs with embedded device logic)*/
-#//define ATCA_HAL_LEGACY_API
+//#define ATCA_HAL_LEGACY_API
 
 /** To use dynamically registered HALs without any of the provided
 implementations its necessary to specify a value here - using this
