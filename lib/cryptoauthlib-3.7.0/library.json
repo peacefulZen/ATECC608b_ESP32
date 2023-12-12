@@ -25,7 +25,8 @@
             "+<calib/>",
             "+<hal/atca_hal.c>",
             "+<jwt/>",
-            "+<host/>"
+            "+<host/>",
+            "+<crypto/>"
         ]
     }
 }
