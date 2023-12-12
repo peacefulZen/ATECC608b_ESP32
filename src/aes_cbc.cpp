@@ -1,11 +1,8 @@
-#include <HardwareSerial.h>
-#include "cryptoauthlib.h"
+#include <Arduino.h>
 #include "aes_cbc.h"
-#include "atca_status.h"
-#include "atca_iface.h"
-#include "atca_basic.h"
-
-
+extern "C" {
+#include "cryptoauthlib.h"
+}
 
 /* \brief Encrypt data using AES CBC algorithme
  *  \param[in] cfg          Logical interface configuration. Some predefined
