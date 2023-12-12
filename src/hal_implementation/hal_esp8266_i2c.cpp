@@ -67,8 +67,8 @@ ATCA_STATUS hal_i2c_send(ATCAIface iface, uint8_t word_address, uint8_t *txdata,
 ATCA_STATUS hal_i2c_receive(ATCAIface iface, uint8_t address, uint8_t *rxdata, uint16_t *rxlength)
 {
     ATCAIfaceCfg *cfg = atgetifacecfg(iface);
-    Wire.requestFrom((int)cfg->atcai2c.slave_address, (int)*rxlength);
-
+    int wantRead = *rxlength;
+    Wire.requestFrom((int)cfg->atcai2c.slave_address, wantRead);
     int i = 0;
     while (Wire.available() && i < *rxlength)
     {
@@ -81,8 +81,9 @@ ATCA_STATUS hal_i2c_receive(ATCAIface iface, uint8_t address, uint8_t *rxdata, u
         String((int)*rxlength) + 
         " bytes from addr 0x" + 
         String(cfg->atcai2c.slave_address, HEX));
-
-    return ATCA_SUCCESS;
+    if (*rxlength == 0)
+        return ATCA_COMM_FAIL;
+    return ATCA_SUCCESS;   
 }
 
 ATCA_STATUS hal_i2c_release(void *hal_data)
