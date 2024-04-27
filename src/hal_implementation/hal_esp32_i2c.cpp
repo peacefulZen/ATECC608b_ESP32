@@ -5,10 +5,10 @@
 extern "C" {
 #include <cryptoauthlib.h>
 }
-#define SDA_PIN 4 // Define the GPIO pin for SDA
-#define SCL_PIN 5 // Define the GPIO pin for SCL
+#define SDA_PIN 16 // Define the GPIO pin for SDA
+#define SCL_PIN 4 // Define the GPIO pin for SCL
 
-#define MAX_I2C_BUSES 1 // ESP8266 has 1 I2C bus
+#define MAX_I2C_BUSES 2 // ESP32 has 2 I2C bus
 
 typedef struct atcaI2Cmaster
 {

@@ -10,7 +10,7 @@ ATCAIfaceCfg cfg;
 ATCA_STATUS status;
 
 // Example of AES KEY (len 32)
-uint8_t example_of_key[32] = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+uint8_t example_of_key[32] = "SznNBRhLA3r3qrJe8UUEdk4KxHwya3j";
 
 // Exemple of configuration for ATECC608A
 static uint8_t configuration_example[112] = {
@@ -83,8 +83,8 @@ void setup()
 
   // Init the constuctor for the library
   cfg.iface_type = ATCA_I2C_IFACE;  // Type of communication -> I2C mode
-  cfg.devtype = ATECC608A;          // Type of chip
-  cfg.atcai2c.slave_address = 0XC0; // I2C addresse (default value)
+  cfg.devtype = ATECC608B;          // Type of chip
+  cfg.atcai2c.slave_address = 0X60; // I2C addresse (default value)
   cfg.atcai2c.bus = 1;
   cfg.atcai2c.baud = 100000;
   cfg.wake_delay = 1500; // Delay of wake up (1500 ms)
