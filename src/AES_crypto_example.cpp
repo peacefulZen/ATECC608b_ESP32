@@ -1,5 +1,6 @@
 #include <Arduino.h>
-extern "C" {
+extern "C"
+{
 #include "cryptoauthlib.h"
 }
 #include "aes_cbc.h"
@@ -16,22 +17,28 @@ void setup()
 
     // Init the constuctor for the library
     cfg.iface_type = ATCA_I2C_IFACE;  // Type of communication -> I2C mode
-    cfg.devtype = ATECC608A;          // Type of chip
-    cfg.atcai2c.slave_address = 0XC0; // I2C addresse (default value)
+    cfg.devtype = ATECC608B;          // Type of chip
+    cfg.atcai2c.slave_address = 0X60; // I2C address of Adafruit device
+    // cfg.atcai2c.slave_address = 0x30;
     cfg.atcai2c.bus = 1;
+    // cfg.atcai2c.baud = 400000;
     cfg.atcai2c.baud = 100000;
     cfg.wake_delay = 1500; // Delay of wake up (1500 ms)
     cfg.rx_retries = 20;
+    Serial.println("\nFirmware start!");
+    // by default logs to stderr, which is not visible printed by printf() in Arduino.
+    // redirect to stdout instead to makeit  visible.
     atca_trace_config(stdout);
 }
 
 void loop()
 {
-    ATCA_STATUS status = atcab_init(&cfg);
+    status = atcab_init(&cfg);
     if (status != ATCA_SUCCESS)
     {
         Serial.println(F("atcab_init() failed : Code -> 0x"));
         Serial.println(status, HEX);
+        return;
     }
     uint addr = 0; // Address for EEPROM
     uint8_t plaintext[32] = "EB4655C2-372F-4133-82B9-AC3DECA";

@@ -4,6 +4,9 @@
         "cal_buffer.h": "c",
         "string.h": "c",
         "atca_host_config_check.h": "c",
-        "cryptoauthlib.h": "c"
+        "cryptoauthlib.h": "c",
+        "stdbool.h": "c",
+        "system_error": "cpp",
+        "typeinfo": "c"
     }
 }

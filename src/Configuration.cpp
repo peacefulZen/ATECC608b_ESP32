@@ -82,7 +82,7 @@ ATCA_STATUS write_configuration(ATCAIfaceCfg *cfg, uint8_t *config, size_t len)
     {
 
         // Write the configuration Array to the chip
-        // Padding of 16 byte (16 first bytes cannot be writed)
+        // Padding of 16 byte (16 first bytes cannot be overwritten)
         status = atcab_write_bytes_zone(ATCA_ZONE_CONFIG, 0, 16, (uint8_t *)config, len);
         return status;
     }
@@ -112,6 +112,8 @@ ATCA_STATUS write_key_slot(ATCAIfaceCfg *cfg, uint8_t key, uint8_t *datakey, siz
         status = atcab_write_zone(ATCA_ZONE_DATA, (uint16_t)key, 0, 0, datakey, 32);
         if (status != ATCA_SUCCESS)
             return status;
+    }else {
+        Serial.println("Device initialization was not successful.");
     }
     return status;
 }
