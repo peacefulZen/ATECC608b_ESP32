@@ -18,7 +18,7 @@ void setup()
     // Init the constuctor for the library
     cfg.iface_type = ATCA_I2C_IFACE;  // Type of communication -> I2C mode
     cfg.devtype = ATECC608B;          // Type of chip
-    cfg.atcai2c.slave_address = 0X60; // I2C address of Adafruit device
+    cfg.atcai2c.slave_address = 0x30; // I2C address of Adafruit device
     // cfg.atcai2c.slave_address = 0x30;
     cfg.atcai2c.bus = 1;
     // cfg.atcai2c.baud = 400000;

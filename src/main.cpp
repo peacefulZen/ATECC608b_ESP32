@@ -90,9 +90,9 @@ bool menu(String message)
   // }
   Serial.print("Answer is: ");
   Serial.println(answer);
-  if (answer == "yes")
+  if (answer == "y")
   {
-    Serial.println("Answer == yes. Returning TRUE");
+    Serial.println("Answer == y. Returning TRUE");
     Serial.println(answer);
     return true;
   }
@@ -110,7 +110,7 @@ void setup()
 
   // Init the constuctor for the library
   cfg.iface_type = ATCA_I2C_IFACE;  // Type of communication -> I2C mode
-  cfg.devtype = ATECC608A;          // Type of chip
+  cfg.devtype = ATECC608B;          // Type of chip
   cfg.atcai2c.slave_address = 0x60; // I2C address of Adafruit device
   // cfg.atcai2c.slave_address = 0x30;
   cfg.atcai2c.bus = 0;
@@ -130,40 +130,54 @@ void loop()
   if (status == ATCA_SUCCESS)
   {
     // Write the configuration
-    if (!menu(F("Do you want to write the configuration ?")))
+    // if (!menu(F("Do you want to write the configuration ?")))
+    if (!menu(F("Configure crypto chip?")))
     {
       return;
     }
+    Serial.println("Writing configuration.");
     status = write_configuration(&cfg, configuration, sizeof(configuration));
     if (status == ATCA_SUCCESS)
     {
+      delay(1000);
       // Lock the configuration Zone
       Serial.println("Successfully wrote configuration file to disk.");
-      if (!menu(F("Do you want to lock the Configuration zone (No more change can be done after that) ?")))
-      {
-        return;
-      }
+      // if (!menu(F("Do you want to lock the Configuration zone (No more change can be done after that) ?")))
+      // {
+      //   return;
+      // }
+      Serial.println();
+      Serial.println("Locking configuration.");
       status = lock_zone(&cfg, LOCK_ZONE_CONFIG);
       if (status == ATCA_SUCCESS)
       {
+        delay(1000);
+        Serial.println();
         Serial.println("Successfully locked config data.");
         // Write the key in the given slot
-        if (!menu(F("Do you want to write the key in the given slot ?")))
-        {
-          return;
-        }
+        // if (!menu(F("Do you want to write the key in the given slot ?")))
+        // {
+        //   return;
+        // }
+        Serial.println();
+        Serial.println("Writing the key into slot 9.");
         status = write_key_slot(&cfg, KEY_SLOT, key, sizeof(key));
         if (status == ATCA_SUCCESS)
         {
+          delay(1000);
+          Serial.println();
           Serial.println("Successfully locked key data.");
           // Lock the Data Zone
-          if (!menu(F("Do you want to lock the Data zone (No more change can be done after that) ?")))
-          {
-            return;
-          }
+          // if (!menu(F("Do you want to lock the Data zone (No more change can be done after that) ?")))
+          // {
+          //   return;
+          // }
+          Serial.println();
+          Serial.println("Locking data zone.");
           status = lock_zone(&cfg, LOCK_ZONE_DATA);
           if (status == ATCA_SUCCESS)
           {
+            delay(1000);
             Serial.println("Successfully locked key data.");
             ATCA_STATUS lock_config = check_lock_zone(&cfg, LOCK_ZONE_CONFIG);
             ATCA_STATUS lock_data = check_lock_zone(&cfg, LOCK_ZONE_DATA);
